@@ -3,17 +3,29 @@
 const items = document.querySelectorAll('li');
 
 items.forEach((element) => {
-  const childList = element.querySelector('ul');
+  const childList = element.querySelector(':scope > ul');
 
   if (!childList) {
     return;
   }
 
-  const textNode = element.firstChild;
+  let textNode = null;
+
+  for (const node of element.childNodes) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+      textNode = node;
+      break;
+    }
+  }
+
+  if (!textNode) {
+    return;
+  }
+
   const span = document.createElement('span');
 
   span.textContent = textNode.textContent.trim();
-  element.replaceChild(span, textNode);
+  textNode.replaceWith(span);
 
   span.addEventListener('click', (e) => {
     e.stopPropagation();
